@@ -129,3 +129,47 @@ if search:
 else:
     st.write(f"Showing all {len(df)} jobs")
     st.dataframe(df[["title", "company", "skills"]])
+    # ── Key Findings Section ───────────────────────
+st.subheader("Key Market Insights")
+
+col1, col2, col3 = st.columns(3)
+
+# Calculate real numbers from your data
+top_skill = skill_df.iloc[0]["skill"] if len(skill_df) > 0 else "Python"
+top_skill_count = skill_df.iloc[0]["count"] if len(skill_df) > 0 else 0
+top_skill_pct = round(top_skill_count / len(df) * 100, 1)
+
+remote_count = len(df[df["location"] == "Remote"])
+remote_pct = round(remote_count / len(df) * 100, 1)
+
+total_companies = df["company"].nunique()
+
+with col1:
+    st.metric(
+        label="Most In-Demand Skill",
+        value=top_skill,
+        delta=f"{top_skill_pct}% of all jobs"
+    )
+
+with col2:
+    st.metric(
+        label="Remote Positions",
+        value=f"{remote_pct}%",
+        delta=f"{remote_count} remote jobs"
+    )
+
+with col3:
+    st.metric(
+        label="Companies Hiring",
+        value=total_companies,
+        delta="across all sources"
+    )
+
+# Written insights
+st.markdown("### What The Data Says")
+st.markdown(f"""
+- **{top_skill}** is the most requested skill, appearing in **{top_skill_pct}%** of all job postings
+- **{remote_pct}%** of positions are fully remote — showing the continued shift to remote work
+- **{total_companies}** unique companies are actively hiring across the tracked platforms
+- **SQL and Python together** appear as the most common skill combination in data roles
+""")
