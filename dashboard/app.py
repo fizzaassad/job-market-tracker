@@ -210,3 +210,74 @@ st.markdown(f"""
 - **{total_companies}** unique companies are actively hiring across the tracked platforms
 - **SQL and Python together** appear as the most common skill combination in data roles
 """)
+# ── Skills Gap Analyzer ────────────────────────
+st.subheader("Skills Gap Analyzer")
+st.caption("Find out which skills you need for your target role")
+
+col1, col2 = st.columns(2)
+
+with col1:
+    target_role = st.text_input("Enter your target job title", 
+                                placeholder="e.g. Data Analyst")
+
+with col2:
+    user_skills = st.multiselect(
+        "Select skills you already have",
+        options=list(SKILLS.keys())
+    )
+
+if target_role:
+    # Filter jobs matching target role
+    role_jobs = df[df["title"].str.contains(target_role, case=False, na=False)]
+    
+    if len(role_jobs) == 0:
+        st.warning(f"No jobs found for '{target_role}'. Try a different title.")
+    else:
+        # Count skills in matching jobs
+        role_skills = [s for lst in role_jobs["skills"] for s in lst]
+        role_skill_counts = Counter(role_skills)
+        total_role_jobs = len(role_jobs)
+        
+        # Build gap analysis
+        gap_data = []
+        for skill, count in role_skill_counts.most_common(10):
+            pct = round(count / total_role_jobs * 100, 1)
+            gap_data.append({
+                "skill":       skill,
+                "demand_pct":  pct,
+                "you_have_it": "✅ Yes" if skill in user_skills else "❌ Missing"
+            })
+        
+        gap_df = pd.DataFrame(gap_data)
+        
+        st.markdown(f"### Results for: **{target_role}**")
+        st.markdown(f"Based on **{total_role_jobs}** job postings")
+        
+        # Color missing skills red
+        missing = gap_df[gap_df["you_have_it"] == "❌ Missing"]["skill"].tolist()
+        have = gap_df[gap_df["you_have_it"] == "✅ Yes"]["skill"].tolist()
+        
+        col3, col4 = st.columns(2)
+        with col3:
+            st.success(f"✅ Skills you have: {len(have)}")
+            for s in have:
+                st.write(f"• {s}")
+        with col4:
+            st.error(f"❌ Skills to learn: {len(missing)}")
+            for s in missing:
+                pct = gap_df[gap_df["skill"] == s]["demand_pct"].values[0]
+                st.write(f"• {s} — needed in {pct}% of jobs")
+        
+        # Bar chart
+        fig4 = px.bar(
+            gap_df,
+            x="demand_pct",
+            y="skill",
+            color="you_have_it",
+            orientation="h",
+            color_discrete_map={"✅ Yes": "#22c55e", "❌ Missing": "#ef4444"},
+            labels={"demand_pct": "% of job postings", "skill": ""},
+            title=f"Skill Demand for {target_role}"
+        )
+        fig4.update_layout(yaxis={"categoryorder": "total ascending"})
+        st.plotly_chart(fig4, use_container_width=True)
