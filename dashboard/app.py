@@ -6,10 +6,42 @@ import json
 import re
 from collections import Counter
 import sqlite3
+import requests
+import json
+from collections import Counter
 
-conn = sqlite3.connect(r"C:\Users\HP\job_market_tracker\data\jobs.db")
-df = pd.read_sql_query("SELECT * FROM jobs", conn)
-conn.close()
+@st.cache_data(ttl=3600)  # cache for 1 hour
+def fetch_jobs():
+    jobs = []
+    
+    # RemoteOK
+    try:
+        r = requests.get("https://remoteok.com/api", 
+                        headers={"User-Agent": "JobMarketTracker/1.0"})
+        jobs.extend(r.json()[1:])
+    except:
+        pass
+    
+    # The Muse
+    try:
+        for page in range(1, 4):
+            r = requests.get("https://www.themuse.com/api/public/jobs",
+                           params={"page": page, "per_page": 100})
+            data = r.json()
+            for job in data.get("results", []):
+                jobs.append({
+                    "position": job.get("name", ""),
+                    "company":  job.get("company", {}).get("name", ""),
+                    "description": job.get("contents", ""),
+                })
+    except:
+        pass
+    
+    return jobs
+
+jobs = fetch_jobs()
+df = pd.DataFrame(jobs)
+st.success(f"Loaded {len(df)} live jobs")
 
 # ── Skill extraction ───────────────────────────
 SKILLS = {
