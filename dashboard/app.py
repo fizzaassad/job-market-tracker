@@ -95,6 +95,43 @@ fig1 = px.bar(
 )
 fig1.update_layout(showlegend=False, yaxis={"categoryorder": "total ascending"})
 st.plotly_chart(fig1, use_container_width=True)
+# ── Chart 3: Skill trends over time ────────────
+st.subheader("Skill Demand Over Time")
+st.caption("Shows how skill demand changes as new jobs are posted daily")
+
+# Add scraped_date to track when each job was fetched
+df["scraped_date"] = pd.Timestamp.now().strftime("%Y-%m-%d")
+
+# Pick top 5 skills to track
+top_5_skills = skill_df.head(5)["skill"].tolist()
+
+# Build trend data
+rows = []
+for _, row in df.iterrows():
+    for skill in row["skills"]:
+        if skill in top_5_skills:
+            rows.append({
+                "date":  row["scraped_date"],
+                "skill": skill,
+            })
+
+if rows:
+    trend_df = pd.DataFrame(rows)
+    trend_counts = trend_df.groupby(["date", "skill"]).size().reset_index(name="count")
+    
+    fig3 = px.line(
+        trend_counts,
+        x="date",
+        y="count",
+        color="skill",
+        markers=True,
+        labels={"count": "Job Postings", "date": "Date"},
+        title="Top 5 Skills — Daily Demand"
+    )
+    st.plotly_chart(fig3, use_container_width=True)
+    st.caption("Note: This chart will show real trends after 7+ days of data collection")
+else:
+    st.info("Trend data will appear after a few days of data collection")
 
 # ── Chart 2: Salary distribution ──────────────
 st.subheader("Salary Ranges")
