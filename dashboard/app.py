@@ -1,16 +1,15 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-import json
-
+import requests
 import re
 from collections import Counter
-import sqlite3
-import requests
-import json
-from collections import Counter
 
-@st.cache_data(ttl=3600)  # cache for 1 hour
+st.set_page_config(page_title="Job Market Tracker", layout="wide")
+st.title("Job Market Signal Tracker")
+
+# ── Fetch data ─────────────────────────────────
+@st.cache_data(ttl=3600)
 def fetch_jobs():
     jobs = []
     
@@ -18,7 +17,15 @@ def fetch_jobs():
     try:
         r = requests.get("https://remoteok.com/api", 
                         headers={"User-Agent": "JobMarketTracker/1.0"})
-        jobs.extend(r.json()[1:])
+        for job in r.json()[1:]:
+            jobs.append({
+                "title":       job.get("position", ""),
+                "company":     job.get("company", ""),
+                "description": job.get("description", ""),
+                "location":    "Remote",
+                "salary_min":  job.get("salary_min"),
+                "salary_max":  job.get("salary_max"),
+            })
     except:
         pass
     
@@ -27,36 +34,39 @@ def fetch_jobs():
         for page in range(1, 4):
             r = requests.get("https://www.themuse.com/api/public/jobs",
                            params={"page": page, "per_page": 100})
-            data = r.json()
-            for job in data.get("results", []):
+            for job in r.json().get("results", []):
                 jobs.append({
-                    "position": job.get("name", ""),
-                    "company":  job.get("company", {}).get("name", ""),
+                    "title":       job.get("name", ""),
+                    "company":     job.get("company", {}).get("name", ""),
                     "description": job.get("contents", ""),
+                    "location":    "",
+                    "salary_min":  None,
+                    "salary_max":  None,
                 })
     except:
         pass
     
     return jobs
 
+# ── Load data ──────────────────────────────────
 jobs = fetch_jobs()
 df = pd.DataFrame(jobs)
 st.success(f"Loaded {len(df)} live jobs")
 
 # ── Skill extraction ───────────────────────────
 SKILLS = {
-    "Python": r"\bpython\b",
-    "SQL": r"\bsql\b",
-    "Excel": r"\bexcel\b",
-    "Tableau": r"\btableau\b",
-    "Power BI": r"\bpower bi\b",
+    "Python":           r"\bpython\b",
+    "SQL":              r"\bsql\b",
+    "Excel":            r"\bexcel\b",
+    "Tableau":          r"\btableau\b",
+    "Power BI":         r"\bpower bi\b",
     "Machine Learning": r"\bmachine learning\b",
-    "AWS": r"\baws\b",
-    "Docker": r"\bdocker\b",
-    "Git": r"\bgit\b",
-    "JavaScript": r"\bjavascript\b",
-    "React": r"\breact\b",
-    "PostgreSQL": r"\bpostgres\b",
+    "AWS":              r"\baws\b",
+    "Docker":           r"\bdocker\b",
+    "Git":              r"\bgit\b",
+    "JavaScript":       r"\bjavascript\b",
+    "React":            r"\breact\b",
+    "PostgreSQL":       r"\bpostgres\b",
 }
 
 def find_skills(text):
@@ -84,7 +94,7 @@ fig1 = px.bar(
     color_continuous_scale="Blues",
 )
 fig1.update_layout(showlegend=False, yaxis={"categoryorder": "total ascending"})
-st.plotly_chart(fig1, width='stretch')
+st.plotly_chart(fig1, use_container_width=True)
 
 # ── Chart 2: Salary distribution ──────────────
 st.subheader("Salary Ranges")
@@ -103,12 +113,11 @@ if len(salary_df) > 0:
 else:
     st.info("Not enough salary data in this dataset yet.")
 
-# ── Raw data table ─────────────────────────────
+# ── Browse jobs table ──────────────────────────
 st.subheader("Browse Jobs")
 search = st.text_input("Search by title, company or skill")
 
 if search:
-    # Search across title, company AND skills column
     mask = (
         df["title"].str.contains(search, case=False, na=False) |
         df["company"].str.contains(search, case=False, na=False) |
