@@ -11,7 +11,7 @@ from supabase import create_client
 # ── Page config ────────────────────────────────
 st.set_page_config(page_title="Job Market Tracker", layout="wide")
 st.title("Job Market Signal Tracker")
-st.caption("Live data updated daily from RemoteOK and The Muse")
+st.caption("Data loaded from Supabase cloud database")
 
 # ── Load data from Supabase ────────────────────
 load_dotenv()
