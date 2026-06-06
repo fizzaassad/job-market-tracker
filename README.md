@@ -78,8 +78,8 @@ job_market_tracker/
 ---
 
 ## About
-Built by [Your Name] as part of a self-directed data engineering 
+Built by Fiza Asad as part of a self-directed data engineering 
 and analysis project. Currently pursuing opportunities in 
 Data Science and AI.
 
-Connect: [Your LinkedIn URL]
+Connect: https://www.linkedin.com/in/fiza-asad-9b9a88288/
