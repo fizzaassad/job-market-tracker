@@ -1,4 +1,4 @@
-from database import save_jobs_to_db, create_database
+from database import save_jobs_to_db
 import requests
 import json
 from datetime import datetime
@@ -99,6 +99,6 @@ with open(filename, "w") as f:
     json.dump(all_jobs, f, indent=2)
 
 # Save to database (new)
-create_database()
+
 save_jobs_to_db(all_jobs)
     
