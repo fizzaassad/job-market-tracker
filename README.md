@@ -1,3 +1,11 @@
+Here's your complete new README. Open your file:
+```
+notepad C:\Users\HP\job_market_tracker\README.md
+```
+
+Delete everything and paste this:
+
+```markdown
 # Job Market Signal Tracker
 
 A live data pipeline that tracks real-time job market trends, 
@@ -13,6 +21,7 @@ declining in demand. This tool provides data-driven answers to:
 - Which skills are most in demand right now?
 - Which cities are hiring the most?
 - What salary should you expect for each skill?
+- Which skills are you missing for your target role?
 
 ---
 
@@ -20,8 +29,9 @@ declining in demand. This tool provides data-driven answers to:
 A fully automated data pipeline that:
 1. Collects 300+ job postings daily from 2 APIs (RemoteOK, The Muse)
 2. Extracts 12 in-demand skills using NLP and regex patterns
-3. Stores everything in a SQLite database (no duplicates)
+3. Stores everything in a Supabase cloud database (no duplicates)
 4. Visualizes trends on a live interactive dashboard
+5. Includes a Skills Gap Analyzer — enter any job title and see which skills you're missing
 
 ---
 
@@ -30,7 +40,7 @@ A fully automated data pipeline that:
 |------|---------|
 | Python | Core programming language |
 | Pandas | Data cleaning and analysis |
-| SQLite | Database storage |
+| Supabase (PostgreSQL) | Cloud database storage |
 | Regex/NLP | Skill extraction from job descriptions |
 | Plotly | Interactive charts |
 | Streamlit | Dashboard deployment |
@@ -40,46 +50,73 @@ A fully automated data pipeline that:
 ---
 
 ## Key Findings
-- **Python** is the most in-demand skill appearing in 65%+ of postings
+- **Python** is the most in-demand skill, appearing in 65%+ of all postings
+- **Excel and Power BI** appear in 100% of Data Analyst job postings — Python alone is not enough
 - **SQL** remains essential across all data roles
-- **Remote jobs** grew significantly in tech and data roles
-- **Machine Learning** skills command higher salaries than average
+- **Remote positions** make up the majority of tech job postings
+- **Machine Learning** skills are growing in demand week over week
+
+---
+
+## Features
+- 📊 Skill demand bar chart — see what employers actually want
+- 📈 Trends over time — track which skills are rising or falling
+- 💰 Salary distribution — understand what to expect
+- 🎯 Skills Gap Analyzer — find exactly what you need to learn
+- 🔍 Job search table — browse and filter all collected jobs
 
 ---
 
 ## How To Run Locally
 1. Clone the repository
+   ```
    git clone https://github.com/fizzaassad/job-market-tracker.git
+   ```
 
 2. Install dependencies
+   ```
    pip install -r requirements.txt
+   ```
 
-3. Collect data
+3. Create a `.env` file in the root folder with your Supabase credentials
+   ```
+   SUPABASE_URL=your_supabase_url
+   SUPABASE_KEY=your_supabase_key
+   ```
+
+4. Collect data
+   ```
    cd src
-   python scraper.py
+   python scrapper.py
+   ```
 
-4. Launch dashboard
+5. Launch dashboard
+   ```
    cd dashboard
    streamlit run app.py
+   ```
 
 ---
 
 ## Project Structure
+```
 job_market_tracker/
 ├── src/
-│   ├── scraper.py       # Collects job data from APIs
+│   ├── scrapper.py      # Collects job data from 2 APIs
 │   ├── processor.py     # Cleans and extracts skills
-│   └── database.py      # SQLite database operations
+│   └── database.py      # Supabase database operations
 ├── dashboard/
 │   └── app.py           # Streamlit dashboard
-├── data/                # Local database and JSON files
+├── data/                # Local JSON backup files
+├── .env                 # Credentials (not on GitHub)
 └── requirements.txt
+```
 
 ---
 
 ## About
-Built by Fiza Asad as part of a self-directed data engineering 
-and analysis project. Currently pursuing opportunities in 
-Data Science and AI.
+Built by Fiza Asad as a self-directed data engineering and analysis project. Currently pursuing opportunities in Data Science and AI, and applying for Masters programs in AI/DS.
 
 Connect: https://www.linkedin.com/in/fiza-asad-9b9a88288/
+```
+
