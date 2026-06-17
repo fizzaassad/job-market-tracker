@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from supabase import create_client
 from datetime import datetime
 
-load_dotenv()
+load_dotenv(override=False)  # won't crash if .env doesn't exist
 
 url = os.getenv("SUPABASE_URL")
 key = os.getenv("SUPABASE_KEY")
