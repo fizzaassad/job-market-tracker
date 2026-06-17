@@ -20,8 +20,6 @@ load_dotenv()
 def fetch_jobs():
     url = os.getenv("SUPABASE_URL")
     key = os.getenv("SUPABASE_KEY")
-    
-    # If Supabase credentials exist, use database
     if url and key:
         try:
             supabase = create_client(url, key)
@@ -30,8 +28,6 @@ def fetch_jobs():
                 return response.data
         except:
             pass
-    
-    # Fallback: fetch live from APIs
     jobs = []
     try:
         r = requests.get("https://remoteok.com/api",
@@ -48,7 +44,6 @@ def fetch_jobs():
             })
     except:
         pass
-    
     try:
         for page in range(1, 4):
             r = requests.get("https://www.themuse.com/api/public/jobs",
@@ -65,7 +60,6 @@ def fetch_jobs():
                 })
     except:
         pass
-    
     return jobs
 
 # ── Build DataFrame ────────────────────────────
@@ -106,7 +100,6 @@ skill_df = pd.DataFrame(skill_counts.items(), columns=["skill", "count"])
 skill_df = skill_df.sort_values("count", ascending=False)
 
 col1, col2, col3 = st.columns(3)
-
 top_skill = skill_df.iloc[0]["skill"] if len(skill_df) > 0 else "Python"
 top_skill_pct = round(skill_df.iloc[0]["count"] / len(df) * 100, 1) if len(skill_df) > 0 else 0
 remote_count = len(df[df["location"] == "Remote"]) if "location" in df.columns else 0
@@ -130,7 +123,6 @@ st.markdown(f"""
 
 # ── Chart 1: Top Skills ────────────────────────
 st.subheader("Most In-Demand Skills")
-
 fig1 = px.bar(
     skill_df.head(15),
     x="count", y="skill",
@@ -144,7 +136,6 @@ st.plotly_chart(fig1, use_container_width=True)
 
 # ── Chart 2: Salary Distribution ──────────────
 st.subheader("Salary Ranges")
-
 salary_df = df[df["salary_min"].notna() & df["salary_max"].notna()].copy()
 if len(salary_df) > 0:
     salary_df["salary_mid"] = (
@@ -160,7 +151,6 @@ else:
 # ── Chart 3: Trends Over Time ──────────────────
 st.subheader("Skill Demand Over Time")
 st.caption("Shows real trends after 7+ days of data collection")
-
 if "scraped_date" in df.columns and df["scraped_date"].notna().any():
     top_5 = skill_df.head(5)["skill"].tolist()
     rows = []
@@ -168,7 +158,6 @@ if "scraped_date" in df.columns and df["scraped_date"].notna().any():
         for skill in row["skills"]:
             if skill in top_5:
                 rows.append({"date": row["scraped_date"], "skill": skill})
-    
     if rows:
         trend_df = pd.DataFrame(rows)
         trend_counts = trend_df.groupby(["date", "skill"]).size().reset_index(name="count")
@@ -192,14 +181,14 @@ with col2:
 
 if target_role:
     role_jobs = df[df["title"].str.contains(target_role, case=False, na=False)]
-    
+
     if len(role_jobs) == 0:
         st.warning(f"No jobs found for '{target_role}'. Try a different title.")
     else:
         role_skills = [s for lst in role_jobs["skills"] for s in lst]
         role_skill_counts = Counter(role_skills)
         total_role_jobs = len(role_jobs)
-        
+
         gap_data = []
         for skill, count in role_skill_counts.most_common(10):
             pct = round(count / total_role_jobs * 100, 1)
@@ -208,54 +197,35 @@ if target_role:
                 "demand_pct":  pct,
                 "you_have_it": "✅ Yes" if skill in user_skills else "❌ Missing"
             })
-        
-       gap_df = pd.DataFrame(gap_data)
 
-if len(gap_df) == 0:
-    st.warning("No skills found for this role. Try a different job title.")
-else:
-    missing = gap_df[gap_df["you_have_it"] == "❌ Missing"]["skill"].tolist()
-    have    = gap_df[gap_df["you_have_it"] == "✅ Yes"]["skill"].tolist()
-    
-    col3, col4 = st.columns(2)
-    with col3:
-        st.success(f"✅ Skills you have: {len(have)}")
-        for s in have:
-            st.write(f"• {s}")
-    with col4:
-        st.error(f"❌ Skills to learn: {len(missing)}")
-        for s in missing:
-            pct = gap_df[gap_df["skill"] == s]["demand_pct"].values[0]
-            st.write(f"• {s} — needed in {pct}% of jobs")
-    
-    fig4 = px.bar(gap_df, x="demand_pct", y="skill",
-                 color="you_have_it", orientation="h",
-                 color_discrete_map={"✅ Yes": "#22c55e", "❌ Missing": "#ef4444"},
-                 labels={"demand_pct": "% of job postings", "skill": ""},
-                 title=f"Skill Demand for {target_role}")
-    fig4.update_layout(yaxis={"categoryorder": "total ascending"})
-    st.plotly_chart(fig4, use_container_width=True)
-        
-        st.markdown(f"### Results for: **{target_role}** ({total_role_jobs} jobs)")
-        
-        col3, col4 = st.columns(2)
-        with col3:
-            st.success(f"✅ Skills you have: {len(have)}")
-            for s in have:
-                st.write(f"• {s}")
-        with col4:
-            st.error(f"❌ Skills to learn: {len(missing)}")
-            for s in missing:
-                pct = gap_df[gap_df["skill"] == s]["demand_pct"].values[0]
-                st.write(f"• {s} — needed in {pct}% of jobs")
-        
-        fig4 = px.bar(gap_df, x="demand_pct", y="skill",
-                     color="you_have_it", orientation="h",
-                     color_discrete_map={"✅ Yes": "#22c55e", "❌ Missing": "#ef4444"},
-                     labels={"demand_pct": "% of job postings", "skill": ""},
-                     title=f"Skill Demand for {target_role}")
-        fig4.update_layout(yaxis={"categoryorder": "total ascending"})
-        st.plotly_chart(fig4, use_container_width=True)
+        gap_df = pd.DataFrame(gap_data)
+
+        if len(gap_df) == 0:
+            st.warning("No skills found for this role. Try a different job title.")
+        else:
+            missing = gap_df[gap_df["you_have_it"] == "❌ Missing"]["skill"].tolist()
+            have    = gap_df[gap_df["you_have_it"] == "✅ Yes"]["skill"].tolist()
+
+            st.markdown(f"### Results for: **{target_role}** ({total_role_jobs} jobs)")
+
+            col3, col4 = st.columns(2)
+            with col3:
+                st.success(f"✅ Skills you have: {len(have)}")
+                for s in have:
+                    st.write(f"• {s}")
+            with col4:
+                st.error(f"❌ Skills to learn: {len(missing)}")
+                for s in missing:
+                    pct = gap_df[gap_df["skill"] == s]["demand_pct"].values[0]
+                    st.write(f"• {s} — needed in {pct}% of jobs")
+
+            fig4 = px.bar(gap_df, x="demand_pct", y="skill",
+                         color="you_have_it", orientation="h",
+                         color_discrete_map={"✅ Yes": "#22c55e", "❌ Missing": "#ef4444"},
+                         labels={"demand_pct": "% of job postings", "skill": ""},
+                         title=f"Skill Demand for {target_role}")
+            fig4.update_layout(yaxis={"categoryorder": "total ascending"})
+            st.plotly_chart(fig4, use_container_width=True)
 
 # ── Browse Jobs ────────────────────────────────
 st.subheader("Browse Jobs")
