@@ -2,7 +2,7 @@ name: Daily Job Scraper
 
 on:
   schedule:
-    - cron: "0 17 * * *"
+    - cron: '0 17 * * *'  # 10pm Pakistan time
   workflow_dispatch:
 
 jobs:
@@ -16,18 +16,25 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.11"
+          python-version: '3.11'
 
       - name: Install dependencies
         run: pip install requests supabase python-dotenv pandas
 
-      - name: Debug secrets
+      - name: Keep Supabase alive
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: |
-          echo "URL is set: ${{ secrets.SUPABASE_URL != '' }}"
-          echo "KEY is set: ${{ secrets.SUPABASE_KEY != '' }}"
+          python - <<EOF
+          import os
+          from supabase import create_client
+          url = os.environ.get("SUPABASE_URL")
+          key = os.environ.get("SUPABASE_KEY")
+          supabase = create_client(url, key)
+          response = supabase.table("jobs").select("count", count="exact").execute()
+          print(f"Supabase alive! Jobs in database: {response.count}")
+          EOF
 
       - name: Run scraper
         env:
