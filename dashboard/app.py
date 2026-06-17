@@ -209,9 +209,32 @@ if target_role:
                 "you_have_it": "✅ Yes" if skill in user_skills else "❌ Missing"
             })
         
-        gap_df = pd.DataFrame(gap_data)
-        missing = gap_df[gap_df["you_have_it"] == "❌ Missing"]["skill"].tolist()
-        have    = gap_df[gap_df["you_have_it"] == "✅ Yes"]["skill"].tolist()
+       gap_df = pd.DataFrame(gap_data)
+
+if len(gap_df) == 0:
+    st.warning("No skills found for this role. Try a different job title.")
+else:
+    missing = gap_df[gap_df["you_have_it"] == "❌ Missing"]["skill"].tolist()
+    have    = gap_df[gap_df["you_have_it"] == "✅ Yes"]["skill"].tolist()
+    
+    col3, col4 = st.columns(2)
+    with col3:
+        st.success(f"✅ Skills you have: {len(have)}")
+        for s in have:
+            st.write(f"• {s}")
+    with col4:
+        st.error(f"❌ Skills to learn: {len(missing)}")
+        for s in missing:
+            pct = gap_df[gap_df["skill"] == s]["demand_pct"].values[0]
+            st.write(f"• {s} — needed in {pct}% of jobs")
+    
+    fig4 = px.bar(gap_df, x="demand_pct", y="skill",
+                 color="you_have_it", orientation="h",
+                 color_discrete_map={"✅ Yes": "#22c55e", "❌ Missing": "#ef4444"},
+                 labels={"demand_pct": "% of job postings", "skill": ""},
+                 title=f"Skill Demand for {target_role}")
+    fig4.update_layout(yaxis={"categoryorder": "total ascending"})
+    st.plotly_chart(fig4, use_container_width=True)
         
         st.markdown(f"### Results for: **{target_role}** ({total_role_jobs} jobs)")
         
