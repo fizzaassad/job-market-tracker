@@ -5,10 +5,13 @@ from datetime import datetime
 
 load_dotenv(override=False)  # won't crash if .env doesn't exist
 
-url = os.getenv("SUPABASE_URL")
-key = os.getenv("SUPABASE_KEY")
-
 def get_client():
+    url = os.environ.get("SUPABASE_URL")
+    key = os.environ.get("SUPABASE_KEY")
+    
+    if not url or not key:
+        raise ValueError("Supabase credentials not found!")
+    
     return create_client(url, key)
 
 def save_jobs_to_db(jobs):
