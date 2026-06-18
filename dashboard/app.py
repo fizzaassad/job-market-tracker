@@ -247,7 +247,7 @@ else:
 st.divider()
 st.markdown("### About This Project")
 st.markdown("""
-When I started learning Data Science I had one problem — I didn't know 
+When I started learning Data Science I had one problem  I didn't know 
 which skills to learn first. Everyone gives different advice. So I built 
 this tool to answer that question with real data instead of opinions.
 
@@ -259,7 +259,7 @@ and visualizes demand trends over time.
 are required in 100% of Data Analyst postings. SQL remains essential across 
 every data role regardless of seniority.
 
-**Built by:** Fiza Asad — currently pursuing Masters applications in AI/DS  
+**Built by:** Fiza Asad 
 **GitHub:** github.com/fizzaassad/job-market-tracker  
 **LinkedIn:** linkedin.com/in/fiza-asad-9b9a88288
 """)
