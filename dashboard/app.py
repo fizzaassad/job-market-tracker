@@ -243,3 +243,23 @@ if search:
 else:
     st.write(f"Showing all {len(df)} jobs")
     st.dataframe(df[["title", "company", "skills"]])
+    # ── About ──────────────────────────────────────
+st.divider()
+st.markdown("### About This Project")
+st.markdown("""
+When I started learning Data Science I had one problem — I didn't know 
+which skills to learn first. Everyone gives different advice. So I built 
+this tool to answer that question with real data instead of opinions.
+
+**What it does:** Collects 200+ job postings daily from two job platforms, 
+extracts skill requirements using NLP, stores everything in a cloud database, 
+and visualizes demand trends over time.
+
+**What I found:** Python appears in 65%+ of all data roles. Excel and Power BI 
+are required in 100% of Data Analyst postings. SQL remains essential across 
+every data role regardless of seniority.
+
+**Built by:** Fiza Asad — currently pursuing Masters applications in AI/DS  
+**GitHub:** github.com/fizzaassad/job-market-tracker  
+**LinkedIn:** linkedin.com/in/fiza-asad-9b9a88288
+""")
