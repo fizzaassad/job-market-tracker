@@ -146,7 +146,7 @@ if len(salary_df) > 0:
                         labels={"salary_mid": "Annual Salary (USD)"})
     st.plotly_chart(fig2, use_container_width=True)
 else:
-    st.info("Not enough salary data yet.")
+    st.info(f"💡 Salary data available for {len(salary_df)} out of {len(df)} jobs ({round(len(salary_df)/len(df)*100, 1)}%). Many job platforms don't disclose salary publicly — this is a known limitation in open job market data.")
 
 # ── Chart 3: Trends Over Time ──────────────────
 st.subheader("Skill Demand Over Time")
