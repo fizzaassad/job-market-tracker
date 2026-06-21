@@ -69,6 +69,7 @@ st.success(f"Loaded {len(df)} jobs")
 
 # ── Skill extraction ───────────────────────────
 SKILLS = {
+    # Data & Tech
     "Python":           r"\bpython\b",
     "SQL":              r"\bsql\b",
     "Excel":            r"\bexcel\b",
@@ -81,6 +82,29 @@ SKILLS = {
     "JavaScript":       r"\bjavascript\b",
     "React":            r"\breact\b",
     "PostgreSQL":       r"\bpostgres\b",
+    
+    # Marketing
+    "SEO":              r"\bseo\b",
+    "Social Media":     r"\bsocial media\b",
+    "Content Writing":  r"\bcontent writ\b|\bcopywriting\b",
+    "Google Ads":       r"\bgoogle ads\b",
+    "Email Marketing":  r"\bemail marketing\b",
+    
+    # Design
+    "Figma":            r"\bfigma\b",
+    "Adobe Photoshop":  r"\bphotoshop\b",
+    "UI/UX Design":     r"\bui/ux\b|\bui design\b|\bux design\b",
+    
+    # Sales & Business
+    "Salesforce":       r"\bsalesforce\b",
+    "Negotiation":      r"\bnegotiation\b",
+    "CRM":              r"\bcrm\b",
+    
+    # Soft Skills
+    "Communication":    r"\bcommunication\b",
+    "Leadership":        r"\bleadership\b",
+    "Project Management": r"\bproject management\b",
+    "Customer Service":  r"\bcustomer service\b",
 }
 
 def find_skills(text):
