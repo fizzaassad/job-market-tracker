@@ -121,12 +121,19 @@ job_market_tracker/
 │   ├── scrapper.py           — Collects job data from 2 APIs
 
 │   ├── processor.py          — Cleans and extracts skills
+
 │   └── database.py           — Supabase cloud database operations
+
 ├── dashboard/
+
 │   └── app.py                — Streamlit interactive dashboard
+
 ├── data/                     — Local JSON backup files
+
 ├── .env                      — Credentials not on GitHub
+
 ├── .gitignore
+
 └── requirements.txt
 
 ---
