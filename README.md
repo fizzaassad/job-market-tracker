@@ -157,11 +157,5 @@ Soft Skills: Communication, Leadership, Project Management, Customer Service
 Built by Fiza Asad as a self-directed data engineering and analysis project to solve a real personal problem — figuring out which skills the job market actually demands, based on data rather than opinions.
 
 When I started learning Data Science I had one problem — I did not know which skills to learn first. Everyone gives different advice. So I built this tool to answer that question with real data instead of opinions.
-Connect: https://www.linkedin.com/in/fiza-asad-9b9a88288/
-
-
-
-
-Currently applying for Masters programs in AI and Data Science in Germany, South Korea, Japan, and China.
 
 Connect: https://www.linkedin.com/in/fiza-asad-9b9a88288/
