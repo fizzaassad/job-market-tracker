@@ -108,11 +108,18 @@ streamlit run app.py
 ## Project Structure
 
 job_market_tracker/
+
 ├── .github/
+
 │   └── workflows/
-│       └── scraper.yml       — GitHub Actions daily automation
+
+│ 
+└── scraper.yml       — GitHub Actions daily automation
+
 ├── src/
+
 │   ├── scrapper.py           — Collects job data from 2 APIs
+
 │   ├── processor.py          — Cleans and extracts skills
 │   └── database.py           — Supabase cloud database operations
 ├── dashboard/
