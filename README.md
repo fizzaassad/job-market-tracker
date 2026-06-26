@@ -3,6 +3,7 @@
 A live automated data pipeline that tracks real-time job market trends, skill demand, and salary insights across 700+ job postings — covering data, tech, marketing, design, sales and more.
 
 🔴 Live Dashboard: https://job-market-tracker-a5xvb7wwilsoyxhcqvtyyf.streamlit.app/
+
 📁 GitHub: https://github.com/fizzaassad/job-market-tracker
 
 ---
